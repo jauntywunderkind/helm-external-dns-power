@@ -10,7 +10,7 @@ spec:
     size: 192Mi
   numberOfInstances: 2
   users:
-    admin:  # database owner
+    admin: # database owner
     - superuser
     - createdb
     #pdns: []  # role for application foo
