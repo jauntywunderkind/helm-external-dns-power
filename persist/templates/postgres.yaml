@@ -1,21 +1,25 @@
 apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
-  name: acid-minimal-cluster
-  namespace: default
+  name: {{ include "external-dns-power-persist.fullname" . }}
+  labels:
+    {{- include "external-dns-power-persist.labels" . | nindent 4 }}
 spec:
-  teamId: "acid"
+  teamId: "dns"
   volume:
-    size: 1Gi
+    size: 192Mi
   numberOfInstances: 2
   users:
-    zalando:  # database owner
+    admin:  # database owner
     - superuser
     - createdb
-    foo_user: []  # role for application foo
+    #pdns: []  # role for application foo
   databases:
-    foo: zalando  # dbname: owner
+    pdns: pdns_pdns_owner # dbname: owner
   preparedDatabases:
-    bar: {}
+    pdns:
+      schemas:
+        pdns:
+          defaultUsers: true
   postgresql:
     version: "12"
