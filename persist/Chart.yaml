@@ -1,5 +1,5 @@
 apiVersion: v2
-name: external-dns-power-persist
+name: extpdns-persist
 description: A Helm chart for PowerDNS persistent entities
 
 # A chart can be either an 'application' or a 'library' chart.

@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "external-dns-power-persist.name" -}}
+{{- define "extpdns-persist.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -11,7 +11,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "external-dns-power-persist.fullname" -}}
+{{- define "extpdns-persist.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -27,16 +27,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "external-dns-power-persist.chart" -}}
+{{- define "extpdns-persist.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "external-dns-power-persist.labels" -}}
-helm.sh/chart: {{ include "external-dns-power-persist.chart" . }}
-{{ include "external-dns-power-persist.selectorLabels" . }}
+{{- define "extpdns-persist.labels" -}}
+helm.sh/chart: {{ include "extpdns-persist.chart" . }}
+{{ include "extpdns-persist.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -46,17 +46,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "external-dns-power-persist.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "external-dns-power-persist.name" . }}
+{{- define "extpdns-persist.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "extpdns-persist.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "external-dns-power-persist.serviceAccountName" -}}
+{{- define "extpdns-persist.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "external-dns-power-persist.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "extpdns-persist.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
