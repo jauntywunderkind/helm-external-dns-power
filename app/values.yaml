@@ -4,6 +4,8 @@
 
 persist:
   resourcePolicy: keep
+  volumeSize: 192MiB
+  postgresInstances: 2
 
 replicaCount: 1
 

@@ -9,8 +9,8 @@ metadata:
 spec:
   teamId: "dns"
   volume:
-    size: 192Mi
-  numberOfInstances: 2
+    size: {{ .Values.persist.volumeSize }}
+  numberOfInstances: {{ .Values.persist.postgresInstances }}
   users:
     admin: # database owner
     - superuser
