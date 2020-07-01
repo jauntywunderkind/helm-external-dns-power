@@ -2,6 +2,8 @@ apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
   name: {{ include "external-dns-power-persist.fullname" . }}
+  annotations:
+    "helm.sh/resource-policy": {{ .Values.persist.resourcePolicy }}
   labels:
     {{- include "external-dns-power-persist.labels" . | nindent 4 }}
 spec:
