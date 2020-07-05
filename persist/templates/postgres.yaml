@@ -12,12 +12,12 @@ spec:
     size: {{ .Values.persist.volumeSize }}
   numberOfInstances: {{ .Values.persist.postgresInstances }}
   users:
-    admin: # database owner
-    - superuser
-    - createdb
-    #pdns: []  # role for application foo
-  databases:
-    pdns: pdns_pdns_owner # dbname: owner
+    admin:
+      - superuser
+      - createdb
+    #pdns: []
+  #databases:
+  #  pdns: pdns
   preparedDatabases:
     pdns:
       schemas:
