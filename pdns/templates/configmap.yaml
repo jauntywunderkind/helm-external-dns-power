@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "extpdns.fullname" . }}
+  labels:
+    {{- include "extpdns.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.pdns }}
+  {{ $key }}: "{{ $value }}"
+  {{- end }}

@@ -33,7 +33,17 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: secret-volume
+              mountPath: /etc/powerdns/secrets
+              readOnly: true
+            - name: config-volume
+              mountPath: /etc/powerdns/configmaps
+              readOnly: true
           ports:
+            - name: dns
+              containerPort: 53
+              protocol: UDP
             - name: http
               containerPort: 80
               protocol: TCP
@@ -47,6 +57,17 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: {{ include "extpdns.fullname" }}
+      - name: conf-volume
+        configMap:
+          name: {{ include "extpdns.fullname" }}
+      - name: postgres-volume
+        secret:
+          # todo: make postgres secret
+          secretName: {{ include "extpdns.fullname" }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

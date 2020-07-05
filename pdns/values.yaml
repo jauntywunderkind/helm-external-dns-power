@@ -7,10 +7,14 @@ persist:
   volumeSize: 192Mi
   postgresInstances: 2
 
+pdns: {}
+  # log-dns-queries: yes
+  # loglevel: 5
+
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: rektide/powerdns
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
