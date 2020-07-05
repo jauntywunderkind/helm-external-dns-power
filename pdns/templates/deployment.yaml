@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "external-dns-power.fullname" . }}
+  name: {{ include "extpdns.fullname" . }}
   labels:
-    {{- include "external-dns-power.labels" . | nindent 4 }}
+    {{- include "extpdns.labels" . | nindent 4 }}
 spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
 {{- end }}
   selector:
     matchLabels:
-      {{- include "external-dns-power.selectorLabels" . | nindent 6 }}
+      {{- include "extpdns.selectorLabels" . | nindent 6 }}
   template:
     metadata:
     {{- with .Values.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       labels:
-        {{- include "external-dns-power.selectorLabels" . | nindent 8 }}
+        {{- include "extpdns.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "external-dns-power.serviceAccountName" . }}
+      serviceAccountName: {{ include "extpdns.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:

@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "external-dns-power.fullname" . }}
+  name: {{ include "extpdns.fullname" . }}
   labels:
-    {{- include "external-dns-power.labels" . | nindent 4 }}
+    {{- include "extpdns.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "external-dns-power.selectorLabels" . | nindent 4 }}
+    {{- include "extpdns.selectorLabels" . | nindent 4 }}

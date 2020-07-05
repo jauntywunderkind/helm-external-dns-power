@@ -2,14 +2,14 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "external-dns-power.fullname" . }}
+  name: {{ include "extpdns.fullname" . }}
   labels:
-    {{- include "external-dns-power.labels" . | nindent 4 }}
+    {{- include "extpdns.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "external-dns-power.fullname" . }}
+    name: {{ include "extpdns.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:
