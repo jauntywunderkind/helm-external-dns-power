@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "extpdns-persist.labels" . | nindent 4 }}
 spec:
-  teamId: "dns"
+  teamId: {{ .Release.Name }}
   volume:
     size: {{ .Values.persist.volumeSize }}
   numberOfInstances: {{ .Values.persist.postgresInstances }}
