@@ -34,11 +34,14 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
-            - name: secret-volume
-              mountPath: /etc/powerdns/secrets
+            - name: etc-config
+              mountPath: /etc/powerdns/config
               readOnly: true
-            - name: config-volume
-              mountPath: /etc/powerdns/configmaps
+            - name: etc-db
+              mountPath: /etc/powerdns/db
+              readOnly: true
+            - name: etc-secret
+              mountPath: /etc/powerdns/secret
               readOnly: true
           ports:
             - name: dns
@@ -58,16 +61,15 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:
-      - name: secret-volume
-        secret:
-          secretName: {{ include "extpdns.fullname" }}
-      - name: conf-volume
+      - name: etc-config
         configMap:
-          name: {{ include "extpdns.fullname" }}
-      - name: postgres-volume
+          name: {{ include "extpdns.fullname" . }}-config
+      - name: etc-db
         secret:
-          # todo: make postgres secret
-          secretName: {{ include "extpdns.fullname" }}
+          secretName: pdns-pdns-reader-user.{{ include "extpdns.fullname" . }}.credentials.postgresql.acid.zalan.do
+      - name: etc-secret
+        secret:
+          secretName: {{ include "extpdns.fullname" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
