@@ -1,3 +1,4 @@
 [submodule "docker-powerdns"]
 	path = docker-powerdns
 	url = https://github.com/jauntywunderkind/docker-powerdns
+	branch = main
