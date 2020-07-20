@@ -67,6 +67,11 @@ spec:
       - name: etc-db
         secret:
           secretName: {{ .Values.persist.db.user }}.{{ include "extpdns-persist.fullname" . }}{{ .Values.persist.db.suffix }}
+          items:
+          - key: username
+            path: gpgsql-user
+          - key: password
+            path: gpgsql-password
       - name: etc-secret
         secret:
           secretName: {{ include "extpdns-persist.fullname" . }}
