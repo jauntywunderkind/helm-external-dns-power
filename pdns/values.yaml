@@ -2,12 +2,17 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-persist:
+#  configuration for postgres object
+pg:
   resourcePolicy: keep
   volumeSize: 192Mi
   postgresInstances: 2
+
+# configures how main chart uses database
+persist:
+  fullnameOverride: ""
   suffix: "-persist"
-  secret:
+  db:
     user: pdns-pdns-reader-user
     suffix: ".credentials.postgresql.acid.zalan.do"
 

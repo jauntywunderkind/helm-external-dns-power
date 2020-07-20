@@ -66,7 +66,7 @@ spec:
           name: {{ include "extpdns.fullname" . }}-config
       - name: etc-db
         secret:
-          secretName: {{ .Values.persist.secret.user }}.{{ include "extpdns-persist.fullname" . }}{{ .Values.persist.secret.suffix }}
+          secretName: {{ .Values.persist.db.user }}.{{ include "extpdns-persist.fullname" . }}{{ .Values.persist.db.suffix }}
       - name: etc-secret
         secret:
           secretName: {{ include "extpdns-persist.fullname" . }}
