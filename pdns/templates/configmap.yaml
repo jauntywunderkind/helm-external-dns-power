@@ -6,6 +6,7 @@ metadata:
     {{- include "extpdns.labels" . | nindent 4 }}
 data:
   gpgsql-host: {{- include "extpdns-persist.fullname" . }}
+  launch: bind,gpgsql
   {{- range $key, $value := .Values.pdns }}
   {{ $key }}: "{{ $value }}"
   {{- end }}
