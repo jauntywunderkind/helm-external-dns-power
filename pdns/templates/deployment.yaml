@@ -66,10 +66,10 @@ spec:
           name: {{ include "extpdns.fullname" . }}-config
       - name: etc-db
         secret:
-          secretName: pdns-pdns-reader-user.{{ include "extpdns.fullname" . }}.credentials.postgresql.acid.zalan.do
+          secretName: {{ .Values.persist.secret.user }}.{{ include "extpdns-persist.fullname" . }}{{ .Values.persist.secret.suffix }}
       - name: etc-secret
         secret:
-          secretName: {{ include "extpdns.fullname" . }}
+          secretName: {{ include "extpdns-persist.fullname" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

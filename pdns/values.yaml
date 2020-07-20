@@ -6,6 +6,10 @@ persist:
   resourcePolicy: keep
   volumeSize: 192Mi
   postgresInstances: 2
+  suffix: "-persist"
+  secret:
+    user: pdns-pdns-reader-user
+    suffix: ".credentials.postgresql.acid.zalan.do"
 
 pdns: {}
   # log-dns-queries: yes
@@ -22,7 +26,6 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-suffixPersist: "-persist"
 
 serviceAccount:
   # Specifies whether a service account should be created
