@@ -3,7 +3,7 @@ kind: postgresql
 metadata:
   name: {{ include "extpdns-persist.fullname" . }}
   annotations:
-    "helm.sh/resource-policy": {{ .Values.persist.resourcePolicy }}
+    "helm.sh/resource-policy": {{ .Values.pg.resourcePolicy }}
   labels:
     {{- include "extpdns-persist.labels" . | nindent 4 }}
 spec:

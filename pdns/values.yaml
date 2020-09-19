@@ -10,6 +10,7 @@ pg:
 
 # configures how main chart uses database
 persist:
+  resourcePolicy: keep
   fullnameOverride: ""
   suffix: "-persist"
   db:
