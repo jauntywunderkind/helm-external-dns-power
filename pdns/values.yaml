@@ -19,26 +19,82 @@ persist:
 
 pdns:
   config:
+    # allow-dnsupdate-from: "127.0.0.1/8, ::1"
+    # any-to-tcp: "yes"
     api: "yes"
+    # api-key: # secrets
+    # api-readonly: "no"
     # api-logfile: /var/log/pdns-api.log
+    # cache-ttl: 20
+    # config-name:  # defined as extpdns.fullname in configmap
+    disable-syslog: "yes"
+    # default-api-rectify: "yes"
+    # default-soa-edit: ""
+    # default-soa-mail: ""
+    # default-soa-name: ""
+    # default-ttl: ""
+    # distributor-threads: 3
+    # dname-processing; "no"
+    # dnsupdate: "no"
+    # do-ipv6-additional-processing; "yes"
+    # domain-metadata-cache-ttl: 60
+    expand-alias: "yes"
     gpgsql-host: {{ include "extpdns-persist.fullname" . }}
     gpgsql-dbname: pdns
+    guardian: false
+    # include-dir: # docker-pdns configures this
+    launch: bind,gpgsql
+    # load-modules:
+    # local-address: "0.0.0.0, ::0"
+    # local-address-nonexist-fail: "no"
+    # local-port: 53
     # log-dns-details: "yes"
     # log-dns-queries: "yes"
-    launch: bind,gpgsql
+    # log-timestamp: "yes"
     #loglevel: 4
     loglevel: 5
     # max-cache-entries: 1000000
     max-cache-entries: 10000 # small system configuration
+    # max-packet-cache-entries: 1000000
+    max-packet-cache-entries: 10000
+    # max-queue-length: 5000
+    # max-signature-cache-entries: # huge
+    # max-tcp-connection-duration: 0
+    max-tcp-connection-duration: 15
+    # max-tcp-connections: 20
+    max-tcp-connections: 200
+    #max-tcp-connections-per-client: 0
+    max-tcp-transactions-per-conn: 63
     # negquery-cache-ttl: 60
     negquery-cache-ttl: 5 # reduce memory pressure by lowering significantly
+    # no-shuffle: "no"
+    # non-local-bind: "no"
+    # overload-queue-length: 0
+    # query-cache-ttl: 20
+    # query-local-address: "0.0.0.0, ::0"
+    # query-logging: "no"
+    # queue-limit: 1500 # ms
+    # receiver-threads: 1
+    # resolver: ""
+    # recursive-cache-ttl: 10
+    reuseport: "yes"
+    # server-id: # set to extpdns.fullname in configmap
+    # signing-threads: 3
+    # socket-dir: "/run"
     tcp-control-address: 0.0.0.0
     tcp-control-range: "0.0.0.0/0,::0/0"
+    # tcp-idle-timeout: 5
     tcp-fast-open: "32"
+    # traceback-handler: "yes"
+    # udp-truncation-threshold: 1232
+    # version-string: full
     webserver: "yes"
     webserver-address: 0.0.0.0
     webserver-allow-from: "0.0.0.0/0;::0/0"
+    # webserver-log-level: normal
     webserver-port: 80
+    #xfer-max-received-mybtes: 100
+    xfer-max-received-mybtes: 10
   image:
     repository: rektide/powerdns
     #pullPolicy: IfNotPresent
