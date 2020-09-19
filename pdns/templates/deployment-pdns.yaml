@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "extpdns.fullname" . }}
+  name: {{ include "extpdns.fullname" . }}-pdns
   labels:
     {{- include "extpdns.labels" . | nindent 4 }}
 spec:
@@ -20,31 +20,31 @@ spec:
       labels:
         {{- include "extpdns.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with (.Values.pdns.image.pullSecrets | default .Values.images.pullSecrets) }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "extpdns.serviceAccountName" . }}
+      #serviceAccountName: {{ include "extpdns.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-pdns
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.pdns.image.repository }}:{{ .Values.pdns.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.pdns.image.pullPolicy | default .Values.images.pullPolicy }}
           env:
             - name: PDNS_LAUNCH
               value: gpgsql
           volumeMounts:
             - name: etc-config
-              mountPath: /etc/powerdns/config
+              mountPath: "/etc/powerdns/config"
               readOnly: true
             - name: etc-db
-              mountPath: /etc/powerdns/db
+              mountPath: "/etc/powerdns/db"
               readOnly: true
             - name: etc-secret
-              mountPath: /etc/powerdns/secret
+              mountPath: "/etc/powerdns/secret"
               readOnly: true
           ports:
             - name: dns

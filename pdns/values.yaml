@@ -17,35 +17,43 @@ persist:
     user: pdns-pdns-writer-user
     suffix: ".credentials.postgresql.acid.zalan.do"
 
-#pdns: {}
 pdns:
-  # log-dns-queries: yes
-  loglevel: 5
-  zones:
-  - yoyodyne.net
-  - example.com
+  config:
+    # log-dns-queries: yes
+    loglevel: 5
+  image:
+    repository: rektide/powerdns
+    #pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "latest"
+    #pullSecrets: []
 
 extdns:
+  #domainFilters:
+  #- yoyodyne.net
+  #- example.com
   nameOverride: ""
   replicaCount: 1
-  owner: extdns-owner
-  source: both
+  interval: 60s # semi-expensive to refresh so go slower
+  logLevel: debug
+  #owner: extdns-owner
+  registry: txt
+  source:
+  - service
+  - ingress
+  image:
+    repository: registry.opensource.zalan.do/teapot/external-dns
+    #pullPolicy: IfNotPresent
+    tag: "latest"
+    #pullSecrets: []
+
 
 replicaCount: 1
 
-image:
-  repository: rektide/powerdns
+images:
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
-
-extDnsImage:
-  repostiory: registry.opensource.zalan.do/teapot/external-dns
-  pullPolicy: IfNotPresent
-  tag: "latest"
   pullSecrets: []
 
-imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 

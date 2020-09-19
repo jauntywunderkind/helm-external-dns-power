@@ -21,6 +21,6 @@ data:
   webserver: yes
   webserver-address: 0.0.0.0
   webserver-allow-from: 0.0.0.0/0;::0/0
-  {{ range $key, $value := .Values.pdns }}
+  {{ range $key, $value := .Values.pdns.config }}
   {{ $key }}: "{{ $value }}"
   {{- end }}

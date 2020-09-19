@@ -20,102 +20,53 @@ spec:
       labels:
         {{- include "extpdns.selectorLabels" . | nindent 8 }}
     spec:
-      # Only use if you're also using RBAC
-      # serviceAccountName: external-dns
-      {{- with .Values.extDnsImage.pullSecrets }}
+      {{- with (.Values.extdns.image.pullSecrets | default .Values.images.pullSecrets) }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "extpdns.serviceAccountName" . }}
-      containers:
-      - name: external-dns
-        image: registry.opensource.zalan.do/teapot/external-dns:latest
-        env:
-        - name: EXTERNAL_DNS_PDNS_API_KEY
-          valueFrom:
-            secretFrom:
-              name: {{ include "extpdns-persist.fullname" . }}
-              key: api-key
-        args:
-        - --source={{ .Values.extdns.source }} # service/ingress/both
-        - --provider=pdns
-        - --pdns-server={{ include "extpdns.fullname" . }}
-        #- --pdns-api-key=$(PDNS_API_KEY) # env var
-        - --txt-owner-id={{ .Values.extdns.owner }}
-        {{- if .Values.pdns.zones }}
-        # will make ExternalDNS see only the zones matching provided domain; omit to process all available zones in PowerDNS
-        - --domain-filter={{ join "," .Values.pdns.zones }}
-        {{- end }}
-        - --log-level=debug
-        - --interval=30s
 
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "extpdns.serviceAccountName" . }}
+      # Only use if you're also using RBAC
+      #serviceAccountName: {{ include "extpdns.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-extdns
+          image: "{{ .Values.extdns.image.repository }}:{{ .Values.extdns.image.tag }}"
+          imagePullPolicy: {{ .Values.extdns.image.pullPolicy | default .Values.images.pullPolicy }}
+          env:
+          - name: EXTERNAL_DNS_PDNS_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "extpdns-persist.fullname" . }}
+                key: api-key
+          args:
+          {{- if .Values.extdns.zones }}
+          # will make ExternalDNS see only the zones matching provided domain; omit to process all available zones in PowerDNS
+          - --domain-filter={{ join "," .Values.pdns.domainFilters}}
+          {{- end }}
+          - --interval={{ .Values.extdns.interval }}
+          - --log-level={{ .Values.extdns.logLevel }}
+          #- --pdns-api-key=$(PDNS_API_KEY) # using env var
+          - --pdns-server={{ include "extpdns.fullname" . }}
+          - --provider=pdns
+          {{- if .Values.extdns.registry }}
+          - --registry={{ .Values.extdns.registry }}
+          {{- end }}
+          {{- range .Values.extdns.source }}
+          - --source={{ . }}
+          {{- end }}
+          - --txt-owner-id={{ .Values.extdns.owner | default (include "extpdns.fullname" .) }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          env:
-            - name: PDNS_LAUNCH
-              value: gpgsql
-          volumeMounts:
-            - name: etc-config
-              mountPath: "/etc/powerdns/config"
-              readOnly: true
-            - name: etc-db
-              mountPath: "/etc/powerdns/db"
-              readOnly: true
-            - name: etc-secret
-              mountPath: "/etc/powerdns/secret"
-              readOnly: true
-          ports:
-            - name: dns
-              containerPort: 53
-              protocol: UDP
-            - name: http
-              containerPort: 80
-              protocol: TCP
-          #livenessProbe:
-          #  httpGet:
-          #    path: /
-          #    port: http
-          #readinessProbe:
-          #  httpGet:
-          #    path: /
-          #    port: http
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      volumes:
-      - name: etc-config
-        configMap:
-          name: {{ include "extpdns.fullname" . }}-config
-      - name: etc-db
-        secret:
-          secretName: {{ .Values.persist.db.user }}.{{ include "extpdns-persist.fullname" . }}{{ .Values.persist.db.suffix }}
-          items:
-          - key: username
-            path: gpgsql-user
-          - key: password
-            path: gpgsql-password
-      - name: etc-secret
-        secret:
-          secretName: {{ include "extpdns-persist.fullname" . }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- with (.Values.extdns.nodeSelector | default .Values.nodeSelector) }}
+        nodeSelector:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with (.Values.extdns.affinity | default .Values.affinity) }}
+        affinity:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with (.Values.extdns.tolerations | default .Values.tolerations) }}
+        tolerations:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
