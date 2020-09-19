@@ -47,12 +47,23 @@ spec:
               mountPath: "/etc/powerdns/secret"
               readOnly: true
           ports:
-            - name: dns
+            - name: dns-udp
               containerPort: 53
               protocol: UDP
-            - name: http
-              containerPort: 80
+            - name: dns-tcp
+              containerPort: 53
               protocol: TCP
+
+            {{- if hasKey .Values.pdns.config "Webserver-port" }}
+            - name: webserver-api
+              containerPort: {{ index .Values.pdns.config "webserver-port" }}
+              protocol: TCP
+            {{- end }}
+            {{ if hasKey .Values.pdns.config "tcp-control-port" }}
+            - name: tcp-control
+              containerPort: {{ index .Values.pdns.config "tcp-control-port" }}
+              protocol: TCP
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /
@@ -78,15 +89,15 @@ spec:
       - name: etc-secret
         secret:
           secretName: {{ include "extpdns-persist.fullname" . }}
-      {{- with .Values.nodeSelector }}
+      {{- with (.Values.pdns.nodeSelector | default .Values.nodeSelector) }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with (.Values.pdns.affinity | default .Values.affinity) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with (.Values.pdns.tolerations | default .Values.tolerations) }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
