@@ -8,6 +8,10 @@ data:
   gpgsql-host: {{ include "extpdns-persist.fullname" . }}
   gpgsql-dbname: pdns
   launch: bind,gpgsql
+  tcp-fast-open: 32
+  webserver: yes
+  webserver-address: 0.0.0.0
+  webserver-allow-from: 0.0.0.0/0;::0/0
   {{ range $key, $value := .Values.pdns }}
   {{ $key }}: "{{ $value }}"
   {{- end }}
