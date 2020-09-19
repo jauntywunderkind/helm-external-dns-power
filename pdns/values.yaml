@@ -13,7 +13,7 @@ persist:
   fullnameOverride: ""
   suffix: "-persist"
   db:
-    user: pdns-pdns-reader-user
+    user: pdns-pdns-writer-user
     suffix: ".credentials.postgresql.acid.zalan.do"
 
 #pdns: {}
