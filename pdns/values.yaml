@@ -16,9 +16,19 @@ persist:
     user: pdns-pdns-reader-user
     suffix: ".credentials.postgresql.acid.zalan.do"
 
-pdns: {}
+#pdns: {}
+pdns:
   # log-dns-queries: yes
-  # loglevel: 5
+  loglevel: 5
+  zones:
+  - yoyodyne.net
+  - example.com
+
+extdns:
+  nameOverride: ""
+  replicaCount: 1
+  owner: extdns-owner
+  source: both
 
 replicaCount: 1
 
@@ -27,6 +37,12 @@ image:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+
+extDnsImage:
+  repostiory: registry.opensource.zalan.do/teapot/external-dns
+  pullPolicy: IfNotPresent
+  tag: "latest"
+  pullSecrets: []
 
 imagePullSecrets: []
 nameOverride: ""
