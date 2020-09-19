@@ -5,9 +5,18 @@ metadata:
   labels:
     {{- include "extpdns.labels" . | nindent 4 }}
 data:
+  api: yes
+  # api-logfile: /var/log/pdns-api.log
+  # log-dns-details: yes
+  # log-dns-queries: yes
   gpgsql-host: {{ include "extpdns-persist.fullname" . }}
   gpgsql-dbname: pdns
   launch: bind,gpgsql
+  # loglevel: 5
+  # max-cache-entries: 1000000
+  # negquery-cache-ttl: 10
+  tcp-control-address: 0.0.0.0,::0
+  tcp-control-range: 0.0.0.0/0,::0/0
   tcp-fast-open: 32
   webserver: yes
   webserver-address: 0.0.0.0
