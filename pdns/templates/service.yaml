@@ -8,8 +8,8 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+      targetPort: 53
+      protocol: UDP
+      name: dns
   selector:
     {{- include "extpdns.selectorLabels" . | nindent 4 }}
