@@ -18,6 +18,24 @@ persist:
     suffix: ".credentials.postgresql.acid.zalan.do"
 
 pdns:
+  service:
+    api:
+      appProtocol: http
+      port: 80
+      protocol: TCP
+      #type: 
+      #clusterIP:
+    domain:
+      appProtocol: domain
+      port: 53
+      protocol: UDP
+    domaintcp:
+      appProtocol: domain
+      port: 53
+      protocol: TCP
+    tcpcontrol:
+      port: 53000
+      protocol: TCP
   config:
     # allow-dnsupdate-from: "127.0.0.1/8, ::1"
     # any-to-tcp: "yes"
@@ -155,7 +173,10 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 53
+  # clusterIP: "" # random
+  # externalName: ""
+  # type: ClusterIP
+  # whatever else
 
 ingress:
   enabled: false
