@@ -7,11 +7,13 @@ metadata:
 spec:
   type: {{ .Values.api  .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: 80
-      protocol: TCP
-      name: api
-      AppProto: http 
-    - 
+    {{- $svc := deepCopy .Values.service.api | mustMerge .Values.serviceDefault -}}
+    - name: api
+    {{- range $key, $value := $svc }}
+      {{ $key }}: {{ $value }}
+    {{- end}}
+    {{- if not (hasKey $svc.targetPort) }}
+      targetPort: {{ $svc.port }}
+    {{-end }}
   selector:
     {{- include "extpdns.selectorLabels" . | nindent 4 }}
