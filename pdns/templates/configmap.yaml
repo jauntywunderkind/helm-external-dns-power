@@ -7,6 +7,7 @@ metadata:
 data:
   server-id: {{ include "extpdns.fullname" }}
   config-name: {{ include "extpdns.fullname" }}
+  gpgsql-host: {{ include "extpdns-persist.fullname" . }}
   {{- range $key, $value := .Values.pdns.config }}
   {{ $key }}: "{{ $value }}"
   {{- end }}

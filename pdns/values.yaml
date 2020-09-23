@@ -39,7 +39,7 @@ pdns:
     # do-ipv6-additional-processing; "yes"
     # domain-metadata-cache-ttl: 60
     expand-alias: "yes"
-    gpgsql-host: {{ include "extpdns-persist.fullname" . }}
+    #gpgsql-host: {{ include "extpdns-persist.fullname" . }}
     gpgsql-dbname: pdns
     guardian: false
     # include-dir: # docker-pdns configures this
