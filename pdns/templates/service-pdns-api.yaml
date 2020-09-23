@@ -7,13 +7,14 @@ metadata:
 spec:
   type: {{ .Values.api  .Values.service.type }}
   ports:
-    {{- $svc := deepCopy .Values.service.api | mustMerge .Values.serviceDefault -}}
     - name: api
-    {{- range $key, $value := $svc }}
+    {{- with .Values.pdns.service.api }}
+    {{- range $key, $value := . }}
       {{ $key }}: {{ $value }}
     {{- end }}
-    {{- if not (hasKey $svc.targetPort) }}
-      targetPort: {{ $svc.port }}
-    {{-end }}
+    {{- if not (hasKey . "targetPort") }}
+      targetPort: {{ .port }}
+    {{- end }}
+    {{- end }}
   selector:
     {{- include "extpdns.selectorLabels" . | nindent 4 }}
