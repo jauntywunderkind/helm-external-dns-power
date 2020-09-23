@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "extpdns.labels" . | nindent 4 }}
 data:
+  server-id: {{ include "extpdns.fullname" }}
   config-name: {{ include "extpdns.fullname" }}
   {{- range $key, $value := .Values.pdns.config }}
   {{ $key }}: "{{ $value }}"
