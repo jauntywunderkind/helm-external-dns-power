@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "extpdns.fullname" . }}-domaintcp
+  labels:
+    {{- include "extpdns.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.pdns.service.domaintcp.type | default .Values.service.type }}
+  ports:
+    - name: domaintcp
+    {{- with .Values.pdns.service.domaintcp }}
+    {{- range $key, $value := . }}
+      {{ $key }}: {{ $value }}
+    {{- end }}
+    {{- if not (hasKey . "targetPort") }}
+      targetPort: {{ .port }}
+    {{- end }}
+    {{- end }}
+  selector:
+    {{- include "extpdns.selectorLabels" . | nindent 4 }}
