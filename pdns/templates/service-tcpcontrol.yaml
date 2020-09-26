@@ -9,7 +9,7 @@ spec:
   ports:
     - name: tcpcontrol
     {{- with .Values.pdns.service.tcpcontrol }}
-    {{- range $key, $value := . }}
+    {{- range $key, $value := omit . "type" }}
       {{ $key }}: {{ $value }}
     {{- end }}
     {{- if not (hasKey . "targetPort") }}

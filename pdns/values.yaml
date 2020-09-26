@@ -29,10 +29,12 @@ pdns:
       appProtocol: domain
       port: 53
       protocol: UDP
+      type: LoadBalancer
     domaintcp:
       appProtocol: domain
       port: 53
       protocol: TCP
+      type: LoadBalancer
     tcpcontrol:
       port: 53000
       protocol: TCP

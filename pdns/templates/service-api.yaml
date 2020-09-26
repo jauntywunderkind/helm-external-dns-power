@@ -9,7 +9,7 @@ spec:
   ports:
     - name: api
     {{- with .Values.pdns.service.api }}
-    {{- range $key, $value := . }}
+    {{- range $key, $value := omit . "type" }}
       {{ $key }}: {{ $value }}
     {{- end }}
     {{- if not (hasKey . "targetPort") }}
