@@ -173,8 +173,8 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-service:
-  type: ClusterIP
+service: {}
+  # type: ClusterIP
   # clusterIP: "" # random
   # externalName: ""
   # type: ClusterIP

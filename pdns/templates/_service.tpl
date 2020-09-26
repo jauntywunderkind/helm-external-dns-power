@@ -11,7 +11,10 @@ metadata:
     {{- include "extpdns.labels" . | nindent 4 }}
 spec:
   {{- $serviceValues := get .Values.pdns.service .serviceName }}
+  {{- $type := $serviceValues.type | default .Values.service.type }}
+  {{- if $type }}
   type: {{ $serviceValues.type | default .Values.service.type }}
+  {{- end }}
   ports:
     - name: {{ .serviceName }}
     {{- with $serviceValues }}
