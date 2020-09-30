@@ -2,20 +2,18 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+resourcePolicy: keep
+
 #  configuration for postgres object
 pg:
-  resourcePolicy: keep
   volumeSize: 192Mi
-  postgresInstances: 2
+  instances: 2
+  user: pdns-pdns-writer-user
+  suffix: ".credentials.postgresql.acid.zalan.do"
 
 # configures how main chart uses database
-persist:
-  resourcePolicy: keep
-  fullnameOverride: ""
+secret:
   suffix: "-persist"
-  db:
-    user: pdns-pdns-writer-user
-    suffix: ".credentials.postgresql.acid.zalan.do"
 
 pdns:
   service:
@@ -34,7 +32,6 @@ pdns:
       appProtocol: domain
       port: 53
       protocol: TCP
-      type: LoadBalancer
     tcpcontrol:
       port: 53000
       protocol: TCP

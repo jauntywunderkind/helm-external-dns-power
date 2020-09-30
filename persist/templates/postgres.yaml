@@ -1,16 +1,19 @@
+{{- /* enhanced .Values with .Values.secret overlayed on top */ -}}
+{{- $enhancedValues := merge dict .Values.pg .Values }}
+{{- $enhancedRoot := merge (dict "Values" $enhancedValues) . }}
 apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
-  name: {{ include "extpdns-persist.fullname" . }}
+  name: {{ include "extpdns-persist.fullname" $enhancedRoot }}
   annotations:
-    "helm.sh/resource-policy": {{ .Values.pg.resourcePolicy }}
+    "helm.sh/resource-policy": {{ $enhancedValues.resourcePolicy }}
   labels:
     {{- include "extpdns-persist.labels" . | nindent 4 }}
 spec:
   teamId: {{ .Release.Name }}
   volume:
-    size: {{ .Values.persist.volumeSize }}
-  numberOfInstances: {{ .Values.persist.postgresInstances }}
+    size: {{ .Values.pg.volumeSize }}
+  numberOfInstances: {{ .Values.pg.instances }}
   users:
     admin:
       - superuser
