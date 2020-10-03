@@ -8,6 +8,7 @@ spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.extdns.replicaCount }}
 {{- end }}
+  revisionHistoryLimit: 1
   selector:
     matchLabels:
       {{- include "extpdns.selectorLabels" . | nindent 6 }}
