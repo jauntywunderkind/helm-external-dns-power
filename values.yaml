@@ -8,7 +8,7 @@ resourcePolicy: keep
 pg:
   volumeSize: 192Mi
   instances: 2
-  user: pdns-pdns-writer-user
+  user: pdns-db-writer-user
   suffix: ".credentials.postgresql.acid.zalan.do"
 
 # configures how main chart uses database
