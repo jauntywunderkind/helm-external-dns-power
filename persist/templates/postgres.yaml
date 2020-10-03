@@ -18,13 +18,11 @@ spec:
     admin:
       - superuser
       - createdb
-    #pdns: []
-  #databases:
-  #  pdns: pdns
   preparedDatabases:
-    pdns:
+    pdns_db:
+      defaultUsers: true
       schemas:
-        pdns:
+        pdns_schema:
           defaultUsers: true
   postgresql:
     version: "12"

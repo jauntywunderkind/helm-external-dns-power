@@ -138,7 +138,6 @@ extdns:
     tag: "latest"
     #pullSecrets: []
 
-
 replicaCount: 1
 
 images:

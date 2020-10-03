@@ -53,7 +53,6 @@ spec:
             - name: dns-tcp
               containerPort: 53
               protocol: TCP
-
             {{- if hasKey .Values.pdns.config "Webserver-port" }}
             - name: webserver-api
               containerPort: {{ index .Values.pdns.config "webserver-port" }}
