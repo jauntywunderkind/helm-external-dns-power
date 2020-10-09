@@ -23,6 +23,7 @@ spec:
       defaultUsers: true
       schemas:
         pdns_schema:
+          defaultRoles: true
           defaultUsers: true
   postgresql:
     version: "12"

@@ -8,8 +8,13 @@ resourcePolicy: keep
 pg:
   volumeSize: 192Mi
   instances: 2
-  user: pdns-db-writer-user
-  suffix: ".credentials.postgresql.acid.zalan.do"
+  # info pdns uses to connect to pg
+  pdns:
+    owner: "pdns-db-pdns-schema-owner-user"
+    reader: "pdns-db-pdns-schema-reader-user"
+    writer: "pdns-db-pdns-schema-writer-user"
+    db: true
+    suffix: ".credentials.postgresql.acid.zalan.do"
 
 # configures how main chart uses database
 secret:

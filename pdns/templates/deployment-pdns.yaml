@@ -1,38 +1,42 @@
+{{- /* enhanced .Values with .Values.secret overlayed on top */ -}}
+{{- $values := merge dict .Values.pdns .Values }}
+{{- $root := merge (dict "Values" $values) . }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "extpdns.fullname" . }}-pdns
+  name: {{ include "extpdns.fullname" $root }}-pdns
   labels:
-    {{- include "extpdns.labels" . | nindent 4 }}
+    {{- include "extpdns.labels" $root | nindent 4 }}
 spec:
-{{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+{{- if not $values.autoscaling.enabled }}
+  replicas: {{ $values.replicaCount }}
 {{- end }}
+  revisionHistoryLimit: 1
   selector:
     matchLabels:
-      {{- include "extpdns.selectorLabels" . | nindent 6 }}
+      {{- include "extpdns.selectorLabels" $root | nindent 6 }}
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
+    {{- with $values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml $root | nindent 8 }}
     {{- end }}
       labels:
-        {{- include "extpdns.selectorLabels" . | nindent 8 }}
+        {{- include "extpdns.selectorLabels" $root | nindent 8 }}
     spec:
-      {{- with (.Values.pdns.image.pullSecrets | default .Values.images.pullSecrets) }}
+      {{- with $values.image.pullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml $root | nindent 8 }}
       {{- end }}
-      #serviceAccountName: {{ include "extpdns.serviceAccountName" . }}
+      #serviceAccountName: {{ include "extpdns.serviceAccountName" $root }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml $values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}-pdns
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.pdns.image.repository }}:{{ .Values.pdns.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.pdns.image.pullPolicy | default .Values.images.pullPolicy }}
+            {{- toYaml $values.securityContext | nindent 12 }}
+          image: "{{ $values.image.repository }}:{{ $values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $values.images.pullPolicy }}
           env:
             - name: PDNS_LAUNCH
               value: gpgsql
@@ -53,14 +57,14 @@ spec:
             - name: dns-tcp
               containerPort: 53
               protocol: TCP
-            {{- if hasKey .Values.pdns.config "Webserver-port" }}
+            {{- if hasKey $values.config "Webserver-port" }}
             - name: webserver-api
-              containerPort: {{ index .Values.pdns.config "webserver-port" }}
+              containerPort: {{ index $values.config "webserver-port" }}
               protocol: TCP
             {{- end }}
-            {{ if hasKey .Values.pdns.config "tcp-control-port" }}
+            {{ if hasKey $values.config "tcp-control-port" }}
             - name: tcp-control
-              containerPort: {{ index .Values.pdns.config "tcp-control-port" }}
+              containerPort: {{ index $values.config "tcp-control-port" }}
               protocol: TCP
             {{- end }}
           livenessProbe:
@@ -72,14 +76,15 @@ spec:
               path: /
               port: http
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml $values.resources | nindent 12 }}
       volumes:
       - name: etc-config
         configMap:
-          name: {{ include "extpdns.fullname" . }}-config
+          name: {{ include "extpdns.fullname" $root }}-config
       - name: etc-db
         secret:
-          secretName: {{ .Values.persist.db.user }}.{{ include "extpdns-persist.fullname" . }}{{ .Values.persist.db.suffix }}
+          {{/* TODO: move init into an init-container & lower this */}}
+          secretName: {{ include "extpdns-persist.db-owner" $root }}
           items:
           - key: username
             path: gpgsql-user
@@ -87,16 +92,16 @@ spec:
             path: gpgsql-password
       - name: etc-secret
         secret:
-          secretName: {{ include "extpdns-persist.fullname" . }}
-      {{- with (.Values.pdns.nodeSelector | default .Values.nodeSelector) }}
+          secretName: {{ include "extpdns-persist.fullname" $root }}
+      {{- with $values.nodeSelector }}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml $root | nindent 8 }}
       {{- end }}
-      {{- with (.Values.pdns.affinity | default .Values.affinity) }}
+      {{- with $values.affinity }}
       affinity:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml $root | nindent 8 }}
       {{- end }}
-      {{- with (.Values.pdns.tolerations | default .Values.tolerations) }}
+      {{- with $values.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml $root | nindent 8 }}
       {{- end }}
