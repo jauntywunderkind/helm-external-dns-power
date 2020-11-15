@@ -36,7 +36,7 @@ spec:
           securityContext:
             {{- toYaml $values.securityContext | nindent 12 }}
           image: "{{ $values.image.repository }}:{{ $values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ $values.images.pullPolicy }}
+          imagePullPolicy: {{ $values.image.pullPolicy }}
           env:
             - name: PDNS_LAUNCH
               value: gpgsql
@@ -57,7 +57,7 @@ spec:
             - name: dns-tcp
               containerPort: 53
               protocol: TCP
-            {{- if hasKey $values.config "Webserver-port" }}
+            {{- if hasKey $values.config "webserver-port" }}
             - name: webserver-api
               containerPort: {{ index $values.config "webserver-port" }}
               protocol: TCP
