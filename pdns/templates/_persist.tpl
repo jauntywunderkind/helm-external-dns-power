@@ -1,36 +1,32 @@
 {{/*
 */}}
-{{- define "extpdns-persist.db-owner" }}
-{{- .Values.pg.pdns.owner }}.
-{{- if .Values.pg.pdns.db | default false | eq true }}
-{{/* {{- include "extpdns-persist.fullname" . }} */}}
-{{- else if .Values.pg.pdns | hasKey "db" }}
-{{- .Values.pg.pdns.db }}
+{{- define "extpdns-persist.make-role" }}
+{{- $makeRole := . }}
+{{- with .root.Values.persist.pg.role }}
+{{- index . $makeRole.role }}.
+{{- if .db | eq true }}
+{{- include "extpdns-persist.fullname" $makeRole.root }}
+{{- else if .db }}
+{{- .db }}
 {{- end }}
-{{- .Values.pg.pdns.suffix | default "" }}
+{{- .tail | default "" }}
+{{- end }}
+{{- end }}
+
+{{/*
+*/}}
+{{- define "extpdns-persist.db-owner" }}
+{{- include "extpdns-persist.make-role" (dict "root" . "role" "owner") }}
 {{- end }}
 
 {{/*
 */}}
 {{- define "extpdns-persist.db-reader" }}
-{{- .Values.pg.pdns.reader }}.
-{{- if .Values.pg.pdns.db | default false | eq true }}
-{{- include "extpdns-persist.fullname" . }}
-{{- else if .Values.pg.pdns | hasKey "db" }}
-{{- .Values.pg.pdns.db }}
-{{- end }}
-{{- .Values.pg.pdns.suffix | default "" }}
+{{- include "extpdns-persist.make-role" (dict "root" . "role" "reader") }}
 {{- end }}
 
 {{/*
 */}}
 {{- define "extpdns-persist.db-writer" }}
-{{- .Values.pg.pdns.writer }}.
-{{- if .Values.pg.pdns.db | default false | eq true }}
-{{- include "extpdns-persist.fullname" . }}
-{{- else if .Values.pg.pdns | hasKey "db" }}
-{{- .Values.pg.pdns.db }}
+{{- include "extpdns-persist.make-role" (dict "root" . "role" "writer") }}
 {{- end }}
-{{- .Values.pg.pdns.suffix | default "" }}
-{{- end }}
-

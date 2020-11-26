@@ -83,7 +83,6 @@ spec:
           name: {{ include "extpdns.fullname" $root }}-config
       - name: etc-db
         secret:
-          {{/* TODO: move init into an init-container & lower this */}}
           secretName: {{ include "extpdns-persist.db-owner" $root }}
           items:
           - key: username

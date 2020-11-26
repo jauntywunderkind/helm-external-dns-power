@@ -4,23 +4,23 @@
 
 resourcePolicy: keep
 
-#  configuration for postgres object
-pg:
-  volumeSize: 192Mi
-  instances: 2
-  # info pdns uses to connect to pg
-  pdns:
-    owner: "pdns-db-pdns-schema-owner-user"
-    reader: "pdns-db-pdns-schema-reader-user"
-    writer: "pdns-db-pdns-schema-writer-user"
-    db: true
-    suffix: ".credentials.postgresql.acid.zalan.do"
-
-# configures how main chart uses database
-secret:
+persist:
   suffix: "-persist"
+  # nameOverride: ""
+  # fullnameOverride: ""
+  pg:
+    volumeSize: 192Mi
+    instances: 2
+    # info pdns uses to connect to pg
+    role:
+      owner: "pdns-db-pdns-schema-owner-user"
+      reader: "pdns-db-pdns-schema-reader-user"
+      writer: "pdns-db-pdns-schema-writer-user"
+      db: true
+      tail: ".credentials.postgresql.acid.zalan.do"
 
 pdns:
+  suffix: "-pdns"
   service:
     api:
       appProtocol: http
@@ -124,11 +124,12 @@ pdns:
     tag: "latest"
     #pullSecrets: []
 
-extdns:
+ext:
+  suffix: "-ext"
   #domainFilters:
   #- yoyodyne.net
   #- example.com
-  nameOverride: ""
+  # nameOverride: ""
   replicaCount: 1
   interval: 60s # semi-expensive to refresh so go slower
   logLevel: debug
@@ -145,7 +146,7 @@ extdns:
 
 replicaCount: 1
 
-images:
+image:
   pullPolicy: IfNotPresent
   pullSecrets: []
 

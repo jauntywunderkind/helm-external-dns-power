@@ -12,8 +12,8 @@ metadata:
 spec:
   teamId: {{ .Release.Name }}
   volume:
-    size: {{ .Values.pg.volumeSize }}
-  numberOfInstances: {{ .Values.pg.instances }}
+    size: {{ .Values.persist.pg.volumeSize }}
+  numberOfInstances: {{ .Values.persist.pg.instances }}
   users:
     admin:
       - superuser
