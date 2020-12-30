@@ -62,7 +62,7 @@ pdns:
     # domain-metadata-cache-ttl: 60
     expand-alias: "yes"
     #gpgsql-host: {{ include "extpdns-persist.fullname" . }}
-    gpgsql-dbname: pdns
+    gpgsql-dbname: pdns_db
     guardian: false
     # include-dir: # docker-pdns configures this
     launch: bind,gpgsql
