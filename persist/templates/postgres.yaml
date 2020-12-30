@@ -1,5 +1,5 @@
 {{- /* enhanced .Values with .Values.secret overlayed on top */ -}}
-{{- $enhancedValues := merge dict .Values.pg .Values }}
+{{- $enhancedValues := merge dict .Values.persist .Values }}
 {{- $enhancedRoot := merge (dict "Values" $enhancedValues) . }}
 apiVersion: "acid.zalan.do/v1"
 kind: postgresql

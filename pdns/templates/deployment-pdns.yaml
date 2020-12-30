@@ -1,6 +1,7 @@
 {{- /* enhanced .Values with .Values.secret overlayed on top */ -}}
 {{- $values := merge dict .Values.pdns .Values }}
-{{- $root := merge (dict "Values" $values) . }}
+{{- $root := merge (dict "Values" $values "Release" .Release) . }}
+# {{ $values | toJson }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
