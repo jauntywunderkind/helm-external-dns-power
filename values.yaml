@@ -115,8 +115,8 @@ pdns:
     webserver-allow-from: "0.0.0.0/0;::0/0"
     # webserver-log-level: normal
     webserver-port: 80
-    #xfer-max-received-mybtes: 100
-    xfer-max-received-mybtes: 10
+    #xfr-max-received-mybtes: 100
+    xfr-max-received-mbytes: 24
   image:
     repository: rektide/powerdns
     #pullPolicy: IfNotPresent
