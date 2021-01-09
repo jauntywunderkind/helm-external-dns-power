@@ -69,13 +69,17 @@ spec:
               protocol: TCP
             {{- end }}
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
+            exec:
+              command:
+              - bash
+              - -c
+              - 'curl --fail -u#:$(cat /etc/powerdns/secret/webserver-password) http://localhost:{{ index $values.config "webserver-port" }}/metrics'
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
+            exec:
+              command:
+              - bash
+              - -c
+              - 'curl --fail -u#:$(cat /etc/powerdns/secret/webserver-password) http://localhost:{{ index $values.config "webserver-port" }}/metrics'
           resources:
             {{- toYaml $values.resources | nindent 12 }}
       volumes:
