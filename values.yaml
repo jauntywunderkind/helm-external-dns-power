@@ -9,8 +9,12 @@ persist:
   # nameOverride: ""
   # fullnameOverride: ""
   pg:
+    # serviceName: 
     volumeSize: 192Mi
     instances: 2
+    # TODO: these are atm hardcoded in to postgres.yaml too
+    database: pdns_db
+    schema: pdns_schema
     # info pdns uses to connect to pg
     role:
       owner: "pdns-db-pdns-schema-owner-user"
@@ -21,6 +25,7 @@ persist:
 
 pdns:
   suffix: "-pdns"
+  # serverId: ""
   service:
     api:
       appProtocol: http

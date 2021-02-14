@@ -5,9 +5,9 @@ metadata:
   labels:
     {{- include "extpdns.labels" . | nindent 4 }}
 data:
+  # TODO supposed to be the edns nsid
   server-id: {{ include "extpdns.fullname" . }}
-  config-name: {{ include "extpdns.fullname" . }}
-  gpgsql-host: {{ include "extpdns-persist.fullname" . }}
+  gpgsql-host: {{ include "extpdns-persist.serviceName" . }}
   {{- range $key, $value := .Values.pdns.config }}
   {{ $key }}: "{{ $value }}"
   {{- end }}

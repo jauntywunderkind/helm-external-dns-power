@@ -1,5 +1,11 @@
 {{/*
 */}}
+{{- define "extpdns-persist.serviceName" }}
+{{ .Values.persist.pg.serviceName | default (include "extpdns-persist.fullname" .) }}
+{{- end }}
+
+{{/*
+*/}}
 {{- define "extpdns-persist.make-role" }}
 {{- $makeRole := . }}
 {{- with .root.Values.persist.pg.role }}

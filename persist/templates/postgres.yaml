@@ -22,6 +22,7 @@ spec:
     pdns_db:
       defaultUsers: true
       schemas:
+        # todo: how to templatize the schema here: {{ $values.persist.pg.schema | default "pdns_schema" }}
         pdns_schema:
           defaultRoles: true
           defaultUsers: true
