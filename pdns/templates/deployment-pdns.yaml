@@ -13,6 +13,8 @@ spec:
   replicas: {{ $values.replicaCount }}
 {{- end }}
   revisionHistoryLimit: 1
+  securityContext:
+    fsGroup: 100
   selector:
     matchLabels:
       {{- include "extpdns.selectorLabels" $root | nindent 6 }}
@@ -41,15 +43,56 @@ spec:
           env:
             - name: PDNS_LAUNCH
               value: gpgsql
+            - name: PGHOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "extpdns-persist.serviceName" . }}
+                  key: gpgsql-host
+            - name: PGPORT
+              value: 5432
+            - name: PGDATABASE
+              value: {{ .Values.persist.pg.database }} 
+            # env is set up with "owner" pg role
+            - name: PGUSER #_OWNER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "extpdns-persist.db-owner" $root }}
+                  key: username
+            - name: PGUSER_WRITER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "extpdns-persist.db-writer" $root }}
+                  key: username
+            - name: PGUSER_READER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "extpdns-persist.db-reader" $root }}
+                  key: username
+            #- name: PGPASSWORD #_OWNER
+            #  valueFrom:
+            #    secretKeyRef:
+            #      name: {{ include "extpdns-persist.db-owner" $root }}
+            #      key: password
+            - name: PGSCHEMA
+              value: {{ .Values.persist.pg.schema }} 
           volumeMounts:
             - name: etc-config
-              mountPath: "/etc/powerdns/config"
+              mountPath: "/etc/powerdns/kube/config"
               readOnly: true
             - name: etc-db
-              mountPath: "/etc/powerdns/db"
+              mountPath: "/etc/powerdns/kube/db"
+              readOnly: true
+            - name: etc-db-owner
+              mountPath: "/opt/docker-powerdns/.pgenv.owner"
+              readOnly: true
+            - name: etc-db-reader
+              mountPath: "/opt/docker-powerdns/.pgenv.reader"
+              readOnly: true
+            - name: etc-db-writer
+              mountPath: "/opt/docker-powerdns/.pgenv.writer"
               readOnly: true
             - name: etc-secret
-              mountPath: "/etc/powerdns/secret"
+              mountPath: "/etc/powerdns/kube/secret"
               readOnly: true
           ports:
             - name: dns-udp
@@ -86,14 +129,40 @@ spec:
       - name: etc-config
         configMap:
           name: {{ include "extpdns.fullname" $root }}-config
+      # pdns is set up with "writer" pg role
       - name: etc-db
         secret:
-          secretName: {{ include "extpdns-persist.db-owner" $root }}
+          secretName: {{ include "extpdns-persist.db-writer" $root }}
           items:
           - key: username
             path: gpgsql-user
           - key: password
             path: gpgsql-password
+      # for psql cli, not pg
+      - name: etc-db-owner
+        secret:
+          secretName: {{ include "extpdns-persist.db-owner" $root }}
+          items:
+          - key: username
+            path: PGUSER
+          - key: password
+            path: PGPASSWORD
+      - name: etc-db-reader
+        secret:
+          secretName: {{ include "extpdns-persist.db-reader" $root }}
+          items:
+          - key: username
+            path: PGUSER
+          - key: password
+            path: PGPASSWORD
+      - name: etc-db-writer
+        secret:
+          secretName: {{ include "extpdns-persist.db-writer" $root }}
+          items:
+          - key: username
+            path: PGUSER
+          - key: password
+            path: PGPASSWORD
       - name: etc-secret
         secret:
           secretName: {{ include "extpdns-persist.fullname" $root }}
