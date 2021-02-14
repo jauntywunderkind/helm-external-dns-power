@@ -49,32 +49,11 @@ spec:
                   name: {{ include "extpdns-persist.serviceName" . }}
                   key: gpgsql-host
             - name: PGPORT
-              value: 5432
+              value: {{ .Values.persist.pg.port | default 5432 }}
             - name: PGDATABASE
-              value: {{ .Values.persist.pg.database }} 
-            # env is set up with "owner" pg role
-            - name: PGUSER #_OWNER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "extpdns-persist.db-owner" $root }}
-                  key: username
-            - name: PGUSER_WRITER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "extpdns-persist.db-writer" $root }}
-                  key: username
-            - name: PGUSER_READER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "extpdns-persist.db-reader" $root }}
-                  key: username
-            #- name: PGPASSWORD #_OWNER
-            #  valueFrom:
-            #    secretKeyRef:
-            #      name: {{ include "extpdns-persist.db-owner" $root }}
-            #      key: password
+              value: {{ .Values.persist.pg.database | default "pdns_db" }} 
             - name: PGSCHEMA
-              value: {{ .Values.persist.pg.schema }} 
+              value: {{ .Values.persist.pg.schema | default "pdns_schema" }} 
           volumeMounts:
             - name: etc-config
               mountPath: "/etc/powerdns/kube/config"
