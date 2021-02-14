@@ -13,8 +13,6 @@ spec:
   replicas: {{ $values.replicaCount }}
 {{- end }}
   revisionHistoryLimit: 1
-  securityContext:
-    fsGroup: 100
   selector:
     matchLabels:
       {{- include "extpdns.selectorLabels" $root | nindent 6 }}
@@ -41,17 +39,21 @@ spec:
           image: "{{ $values.image.repository }}:{{ $values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ $values.image.pullPolicy }}
           env:
-            - name: PDNS_LAUNCH
-              value: gpgsql
             - name: PGHOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "extpdns-persist.serviceName" . }}
+                  name: {{ include "extpdns.fullname" $root }}-config
                   key: gpgsql-host
             - name: PGPORT
-              value: {{ .Values.persist.pg.port | default 5432 }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "extpdns.fullname" $root }}-config
+                  key: gpgsql-port
             - name: PGDATABASE
-              value: {{ .Values.persist.pg.database | default "pdns_db" }} 
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "extpdns.fullname" $root }}-config
+                  key: gpgsql-dbname
             - name: PGSCHEMA
               value: {{ .Values.persist.pg.schema | default "pdns_schema" }} 
           volumeMounts:

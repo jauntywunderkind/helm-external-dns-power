@@ -7,7 +7,9 @@ metadata:
 data:
   # TODO supposed to be the edns nsid
   server-id: {{ include "extpdns.fullname" . }}
-  gpgsql-host: {{ include "extpdns-persist.serviceName" . }}
+  gpgsql-host: {{ .Values.persist.pg.serviceName | default (include "extpdns-persist.fullname" .) }}
+  gpgsql-port: {{ .Values.persist.pg.port | default "5432" }}
+  gpgsql-dbname: {{ .Values.persist.pg.database | default "pdns_db" }}
   {{- range $key, $value := .Values.pdns.config }}
   {{ $key }}: "{{ $value }}"
   {{- end }}

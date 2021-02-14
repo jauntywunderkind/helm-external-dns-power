@@ -9,9 +9,9 @@ persist:
   # nameOverride: ""
   # fullnameOverride: ""
   pg:
-    # serviceName: 
     volumeSize: 192Mi
     instances: 2
+    #serviceName:
     # TODO: these are atm hardcoded in to postgres.yaml too
     #port: 5432
     #database: pdns_db
@@ -67,8 +67,6 @@ pdns:
     # do-ipv6-additional-processing; "yes"
     # domain-metadata-cache-ttl: 60
     expand-alias: "yes"
-    #gpgsql-host: {{ include "extpdns-persist.fullname" . }}
-    gpgsql-dbname: pdns_db
     guardian: false
     # include-dir: # docker-pdns configures this
     launch: bind,gpgsql
@@ -170,7 +168,8 @@ serviceAccount:
 
 podAnnotations: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  fsGroup: 100
   # fsGroup: 2000
 
 securityContext: {}
