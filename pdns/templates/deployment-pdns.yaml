@@ -98,15 +98,11 @@ spec:
           livenessProbe:
             exec:
               command:
-              - bash
-              - -c
-              - 'curl --fail -u#:$(cat /etc/powerdns/secret/webserver-password) http://localhost:{{ index $values.config "webserver-port" }}/metrics'
+              - pdns-healthcheck
           readinessProbe:
             exec:
               command:
-              - bash
-              - -c
-              - 'curl --fail -u#:$(cat /etc/powerdns/secret/webserver-password) http://localhost:{{ index $values.config "webserver-port" }}/metrics'
+              - pdns-healthcheck
           resources:
             {{- toYaml $values.resources | nindent 12 }}
       volumes:
