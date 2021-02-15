@@ -27,6 +27,7 @@ persist:
 pdns:
   suffix: "-pdns"
   # serverId: ""
+  # pgAppName: ""
   service:
     api:
       appProtocol: http

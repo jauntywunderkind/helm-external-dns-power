@@ -56,6 +56,9 @@ spec:
                   key: gpgsql-dbname
             - name: PGSCHEMA
               value: {{ .Values.persist.pg.schema | default "pdns_schema" }} 
+            - name: PGAPPNAME
+              # configmap has an app name in gpgsql-extra-connection-parameters too
+              value: "{{ .Values.pdns.pgAppName | default (include "extpdns.fullname" $root ) }}-cli"
           volumeMounts:
             - name: etc-config
               mountPath: "/etc/powerdns/kube/config"
