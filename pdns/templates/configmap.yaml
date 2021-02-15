@@ -10,7 +10,11 @@ data:
   gpgsql-host: {{ .Values.persist.pg.serviceName | default (include "extpdns-persist.fullname" .) }}
   gpgsql-port: "{{ .Values.persist.pg.port | default 5432 }}"
   gpgsql-dbname: {{ .Values.persist.pg.database | default "pdns_db" }}
-  gpgsql-extra-connection-parameters: "appplication_name={{ .Values.pdns.pgAppName | default (include "extpdns.fullname" . ) }}"
+  # invalid connection option "application_name"
+  #gpgsql-extra-connection-parameters: "appplication_name={{ .Values.pdns.pgAppName | default (include "extpdns.fullname" . ) }}"
+  local-port: "{{ add (.Values.pdns.portBase | default 5300) 53 }}"
+  webserver-port: "{{ add (.Values.pdns.portBase | default 5300) 80 }}"
+  # we leave tcp-control-port at 53000
   {{- range $key, $value := .Values.pdns.config }}
   {{ $key }}: "{{ $value }}"
   {{- end }}

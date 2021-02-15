@@ -28,21 +28,30 @@ pdns:
   suffix: "-pdns"
   # serverId: ""
   # pgAppName: ""
+  # portBase: 5300
+  securityContext:
+    capabilities:
+      add:
+        - NET_BIND_SERVICE
+        - NET_ADMIN
   service:
     api:
       appProtocol: http
       port: 80
       protocol: TCP
       #type: 
+      targetPort: 5380
       #clusterIP:
     domain:
       appProtocol: domain
       port: 53
       protocol: UDP
+      targetPort: 5353
       type: LoadBalancer
     domaintcp:
       appProtocol: domain
       port: 53
+      targetPort: 5353
       protocol: TCP
     tcpcontrol:
       port: 53000
@@ -75,6 +84,7 @@ pdns:
     # local-address: "0.0.0.0, ::0"
     # local-address-nonexist-fail: "no"
     # local-port: 53
+    # local-port: 5353 # 53 + basePort
     # log-dns-details: "yes"
     # log-dns-queries: "yes"
     # log-timestamp: "yes"
@@ -109,9 +119,10 @@ pdns:
     # signing-threads: 3
     # socket-dir: "/run"
     tcp-control-address: 0.0.0.0
+    # tcp-control-port: 58300
     tcp-control-range: "0.0.0.0/0,::0/0"
     # tcp-idle-timeout: 5
-    tcp-fast-open: "32"
+    tcp-fast-open: "16"
     # traceback-handler: "yes"
     # udp-truncation-threshold: 1232
     # version-string: full
@@ -119,7 +130,8 @@ pdns:
     webserver-address: 0.0.0.0
     webserver-allow-from: "0.0.0.0/0;::0/0"
     # webserver-log-level: normal
-    webserver-port: 80
+    # webserver-port: 8081
+    # webserver-port: 5380 # 80 + basePort
     #xfr-max-received-mybtes: 100
     xfr-max-received-mbytes: 24
   image:
