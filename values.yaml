@@ -31,19 +31,20 @@ pdns:
   # serverId: ""
   # pgAppName: ""
   # portBase: 5300
-  securityContext:
-    capabilities:
-      add:
-        - NET_BIND_SERVICE
-        - NET_ADMIN
+  #securityContext:
+  #  capabilities:
+  #    add:
+  #      - NET_BIND_SERVICE
+  #      - NET_ADMIN
   service:
     api:
       appProtocol: http
-      port: 80
+      port: 5380
       protocol: TCP
       #type: 
       targetPort: 5380
       #clusterIP:
+      type: LoadBalancer
     domain:
       appProtocol: domain
       port: 53
@@ -53,11 +54,13 @@ pdns:
     domaintcp:
       appProtocol: domain
       port: 53
-      targetPort: 5353
       protocol: TCP
+      targetPort: 5353
+      type: LoadBalancer
     tcpcontrol:
       port: 53000
       protocol: TCP
+      type: LoadBalancer
   config:
     # allow-dnsupdate-from: "127.0.0.1/8, ::1"
     # any-to-tcp: "yes"
@@ -157,11 +160,12 @@ ext:
   replicaCount: 1
   interval: 60s # semi-expensive to refresh so go slower
   logLevel: debug
-  #owner: extdns-owner
+  #owner: NAME
   registry: txt
   source:
   - service
   - ingress
+  - crd
   image:
     repository: registry.opensource.zalan.do/teapot/external-dns
     #pullPolicy: IfNotPresent

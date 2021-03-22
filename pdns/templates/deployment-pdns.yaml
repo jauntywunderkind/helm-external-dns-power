@@ -83,18 +83,22 @@ spec:
           ports:
             - name: dns-udp
               containerPort: 53
+              #hostPort: 53
               protocol: UDP
             - name: dns-tcp
               containerPort: 53
+              #hostPort: 53
               protocol: TCP
             {{- if hasKey $values.config "webserver-port" }}
             - name: webserver-api
               containerPort: {{ index $values.config "webserver-port" }}
+              #hostPort: {{ index $values.config "webserver-port" }}
               protocol: TCP
             {{- end }}
             {{ if hasKey $values.config "tcp-control-port" }}
             - name: tcp-control
               containerPort: {{ index $values.config "tcp-control-port" }}
+              #hostPort: {{ index $values.config "tcp-control-port" }}
               protocol: TCP
             {{- end }}
           livenessProbe:
@@ -114,7 +118,7 @@ spec:
       # pdns is set up with "writer" pg role
       - name: etc-db
         secret:
-          secretName: {{ include "extpdns-persist.db-writer" $root }}
+          secretName: {{ include "extpdns-persist.db-owner" $root }}
           items:
           - key: username
             path: gpgsql-user
