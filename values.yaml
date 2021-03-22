@@ -25,6 +25,8 @@ persist:
       tail: ".credentials.postgresql.acid.zalan.do"
 
 pdns:
+  zones:
+  - example.net
   suffix: "-pdns"
   # serverId: ""
   # pgAppName: ""
