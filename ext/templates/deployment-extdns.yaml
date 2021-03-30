@@ -1,12 +1,15 @@
+{{- $values := merge dict .Values.ext .Values }}
+{{- $root := merge (dict "Values" $values "Release" .Release) . }}
+# {{ $values | toJson }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "extpdns.fullname" . }}-extdns
+  name: {{ include "extpdns.fullname" . }}-ext
   labels:
     {{- include "extpdns.labels" . | nindent 4 }}
 spec:
-{{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.extdns.replicaCount }}
+{{- if not $values.autoscaling.enabled }}
+  replicas: {{ $values.replicaCount }}
 {{- end }}
   revisionHistoryLimit: 1
   selector:
@@ -14,14 +17,14 @@ spec:
       {{- include "extpdns.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
+    {{- with $values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       labels:
         {{- include "extpdns.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with (.Values.extdns.image.pullSecrets | default .Values.images.pullSecrets) }}
+      {{- with $values.pullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -29,11 +32,11 @@ spec:
       # Only use if you're also using RBAC
       #serviceAccountName: {{ include "extpdns.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml $values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}-extdns
-          image: "{{ .Values.extdns.image.repository }}:{{ .Values.extdns.image.tag }}"
-          imagePullPolicy: {{ .Values.extdns.image.pullPolicy | default .Values.images.pullPolicy }}
+        - name: {{ .Chart.Name }}-ext
+          image: "{{ $values.image.repository }}:{{ $values.image.tag }}"
+          imagePullPolicy: {{ $values.image.pullPolicy }}
           env:
           - name: EXTERNAL_DNS_PDNS_API_KEY
             valueFrom:
@@ -41,33 +44,34 @@ spec:
                 name: {{ include "extpdns-persist.fullname" . }}
                 key: api-key
           args:
-          {{- if .Values.extdns.zones }}
+          {{- if $values.zones }}
           # will make ExternalDNS see only the zones matching provided domain; omit to process all available zones in PowerDNS
-          - --domain-filter={{ join "," .Values.pdns.domainFilters}}
+          # note: cross-chart picking!
+          - --domain-filter={{ join "," $values.pdns.zones }}
           {{- end }}
-          - --interval={{ .Values.extdns.interval }}
-          - --log-level={{ .Values.extdns.logLevel }}
+          - --interval={{ $values.interval }}
+          - --log-level={{ $values.logLevel }}
           #- --pdns-api-key=$(PDNS_API_KEY) # using env var
           - --pdns-server={{ include "extpdns.fullname" . }}
           - --provider=pdns
-          {{- if .Values.extdns.registry }}
-          - --registry={{ .Values.extdns.registry }}
+          {{- if $values.registry }}
+          - --registry={{ $values.registry }}
           {{- end }}
-          {{- range .Values.extdns.source }}
+          {{- range $values.source }}
           - --source={{ . }}
           {{- end }}
-          - --txt-owner-id={{ .Values.extdns.owner | default (include "extpdns.fullname" .) }}
+          - --txt-owner-id={{ $values.owner | default (include "extpdns.fullname" .) }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-        {{- with (.Values.extdns.nodeSelector | default .Values.nodeSelector) }}
+            {{- toYaml $values.securityContext | nindent 12 }}
+        {{- with $values.nodeSelector }}
         nodeSelector:
           {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- with (.Values.extdns.affinity | default .Values.affinity) }}
+        {{- with $values.affinity }}
         affinity:
           {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- with (.Values.extdns.tolerations | default .Values.tolerations) }}
+        {{- with $values.tolerations }}
         tolerations:
           {{- toYaml . | nindent 8 }}
         {{- end }}
