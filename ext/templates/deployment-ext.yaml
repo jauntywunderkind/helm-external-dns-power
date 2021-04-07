@@ -52,7 +52,7 @@ spec:
           - --interval={{ $values.interval }}
           - --log-level={{ $values.logLevel }}
           #- --pdns-api-key=$(PDNS_API_KEY) # using env var
-          - --pdns-server={{ include "extpdns.fullname" . }}
+          - --pdns-server={{ include "extpdns-pdns.fullname" . }}
           - --provider=pdns
           {{- if $values.registry }}
           - --registry={{ $values.registry }}
