@@ -47,7 +47,7 @@ spec:
           {{- if $values.zones }}
           # will make ExternalDNS see only the zones matching provided domain; omit to process all available zones in PowerDNS
           # note: cross-chart picking!
-          - --domain-filter={{ join "," $values.pdns.zones }}
+          - --domain-filter={{ join "\n" ($values.domainFilters | default $values.pdns.zones) }}
           {{- end }}
           - --interval={{ $values.interval }}
           - --log-level={{ $values.logLevel }}

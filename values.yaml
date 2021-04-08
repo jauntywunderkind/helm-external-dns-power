@@ -147,6 +147,7 @@ ext:
   suffix: "-ext"
   # would like to have https://github.com/kubernetes-sigs/external-dns/issues/1454 for multiple
   namespace: default
+  # domainFilters will default to pdns.zones
   #domainFilters:
   #- yoyodyne.net
   #- example.com
