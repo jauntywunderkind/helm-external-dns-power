@@ -1,12 +1,13 @@
 {{- $values := merge dict .Values.ext .Values }}
 {{- $root := merge (dict "Values" $values "Release" .Release) . }}
+{{- range $values.namespaces -}}
 # {{ $values | toJson }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "extpdns.fullname" . }}-ext
+  name: {{ include "extpdns.fullname" $root }}-ext-{{ $ }}
   labels:
-    {{- include "extpdns.labels" . | nindent 4 }}
+    {{- include "extpdns.labels" $root | nindent 4 }}
 spec:
 {{- if not $values.autoscaling.enabled }}
   replicas: {{ $values.replicaCount }}
@@ -14,7 +15,7 @@ spec:
   revisionHistoryLimit: 1
   selector:
     matchLabels:
-      {{- include "extpdns.selectorLabels" . | nindent 6 }}
+      {{- include "extpdns.selectorLabels" $root | nindent 6 }}
   template:
     metadata:
     {{- with $values.podAnnotations }}
@@ -22,7 +23,7 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       labels:
-        {{- include "extpdns.selectorLabels" . | nindent 8 }}
+        {{- include "extpdns.selectorLabels" $root | nindent 8 }}
     spec:
       {{- with $values.pullSecrets }}
       imagePullSecrets:
@@ -30,7 +31,7 @@ spec:
       {{- end }}
 
       # Only use if you're also using RBAC
-      #serviceAccountName: {{ include "extpdns.serviceAccountName" . }}
+      serviceAccountName: {{ include "extpdns.serviceAccountName" $root }}
       securityContext:
         {{- toYaml $values.podSecurityContext | nindent 8 }}
       containers:
@@ -75,3 +76,4 @@ spec:
         tolerations:
           {{- toYaml . | nindent 8 }}
         {{- end }}
+{{- end }}

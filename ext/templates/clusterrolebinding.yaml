@@ -1,5 +1,5 @@
-{{- if .Values.serviceAccount.create -}}
 {{- $values := merge dict .Values.ext .Values }}
+{{- range $values.namespaces -}}
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -17,5 +17,5 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "extpdns.serviceAccountName" . }}
-  namespace: {{ $values.namespace }}
+  namespace: {{ $ }}
 {{- end }}
