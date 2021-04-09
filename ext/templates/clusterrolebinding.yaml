@@ -1,11 +1,12 @@
 {{- $values := merge dict .Values.ext .Values }}
+{{- $root := merge (dict "Values" $values "Release" .Release) . }}
 {{- range $values.namespaces -}}
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "extpdns.serviceAccountName" . }}-viewer
+  name: {{ include "extpdns.serviceAccountName" $root }}-viewer
   labels:
-    {{- include "extpdns.labels" . | nindent 4 }}
+    {{- include "extpdns.labels" $root | nindent 4 }}
   {{- with .Values.serviceAccount.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -13,9 +14,9 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "extpdns.serviceAccountName" . }}
+  name: {{ include "extpdns.serviceAccountName" $root }}
 subjects:
 - kind: ServiceAccount
-  name: {{ include "extpdns.serviceAccountName" . }}
+  name: {{ include "extpdns.serviceAccountName" $root }}
   namespace: {{ $ }}
 {{- end }}

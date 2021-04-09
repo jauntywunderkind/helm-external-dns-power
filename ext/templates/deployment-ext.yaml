@@ -1,5 +1,5 @@
 {{- $values := merge dict .Values.ext .Values }}
-{{- $root := merge (dict "Values" $values "Release" .Release) . }}
+{{- $root := merge (dict "Values" $values "Release" .Release "Chart" .Chart) . }}
 {{- range $values.namespaces -}}
 # {{ $values | toJson }}
 apiVersion: apps/v1
@@ -35,14 +35,14 @@ spec:
       securityContext:
         {{- toYaml $values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}-ext
+        - name: {{ $root.Chart.Name }}-ext
           image: "{{ $values.image.repository }}:{{ $values.image.tag }}"
           imagePullPolicy: {{ $values.image.pullPolicy }}
           env:
           - name: EXTERNAL_DNS_PDNS_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ include "extpdns-persist.fullname" . }}
+                name: {{ include "extpdns-persist.fullname" $root }}
                 key: api-key
           args:
           {{- if $values.zones }}
@@ -53,7 +53,7 @@ spec:
           - --interval={{ $values.interval }}
           - --log-level={{ $values.logLevel }}
           #- --pdns-api-key=$(PDNS_API_KEY) # using env var
-          - --pdns-server={{ include "extpdns-pdns.fullname" . }}
+          - --pdns-server={{ include "extpdns-pdns.fullname" $root }}
           - --provider=pdns
           {{- if $values.registry }}
           - --registry={{ $values.registry }}
@@ -61,7 +61,7 @@ spec:
           {{- range $values.source }}
           - --source={{ . }}
           {{- end }}
-          - --txt-owner-id={{ $values.owner | default (include "extpdns.fullname" .) }}
+          - --txt-owner-id={{ $values.owner | default (include "extpdns.fullname" $root) }}
           securityContext:
             {{- toYaml $values.securityContext | nindent 12 }}
         {{- with $values.nodeSelector }}
