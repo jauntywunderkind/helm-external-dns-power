@@ -1,11 +1,11 @@
 {{- $values := merge dict .Values.ext .Values }}
 {{- $root := merge (dict "Values" $values "Release" .Release "Chart" .Chart) . }}
-{{- range $values.namespaces -}}
-# {{ $values | toJson }}
+{{- range $values.namespaces }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "extpdns.fullname" $root }}-ext-{{ $ }}
+  name: {{ include "extpdns.fullname" $root }}-ext-{{ . }}
   labels:
     {{- include "extpdns.labels" $root | nindent 4 }}
 spec:
@@ -32,8 +32,8 @@ spec:
 
       # Only use if you're also using RBAC
       serviceAccountName: {{ include "extpdns.serviceAccountName" $root }}
-      securityContext:
-        {{- toYaml $values.podSecurityContext | nindent 8 }}
+      #securityContext:
+      #  {{- toYaml $values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ $root.Chart.Name }}-ext
           image: "{{ $values.image.repository }}:{{ $values.image.tag }}"
@@ -45,12 +45,10 @@ spec:
                 name: {{ include "extpdns-persist.fullname" $root }}
                 key: api-key
           args:
-          {{- if $values.zones }}
           # will make ExternalDNS see only the zones matching provided domain; omit to process all available zones in PowerDNS
           # note: cross-chart picking!
-          - --domain-filter={{ join "\n" ($values.domainFilters | default $values.pdns.zones) }}
-          {{- end }}
           - --interval={{ $values.interval }}
+          - --domain-filter={{ join "\n" $values.pdns.zones | indent 12 | trim }}
           - --log-level={{ $values.logLevel }}
           #- --pdns-api-key=$(PDNS_API_KEY) # using env var
           - --pdns-server={{ include "extpdns-pdns.fullname" $root }}
@@ -76,4 +74,4 @@ spec:
         tolerations:
           {{- toYaml . | nindent 8 }}
         {{- end }}
-{{- end }}
+{{ end }}
