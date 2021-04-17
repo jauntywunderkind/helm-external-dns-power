@@ -21,5 +21,12 @@ rules:
   verbs: ["get","watch","list"]
 - apiGroups: [""]
   resources: ["nodes"]
-  verbs: ["list"]
+  verbs: ["get","list","watch"]
+# https://github.com/kubernetes-sigs/external-dns/blob/master/docs/contributing/crd-source.md#rbac-configuration
+- apiGroups: ["externaldns.k8s.io"]
+  resources: ["dnsendpoints"]
+  verbs: ["get","watch","list"]
+- apiGroups: ["externaldns.k8s.io"]
+  resources: ["dnsendpoints/status"]
+  verbs: ["*"]
 {{- end }}
