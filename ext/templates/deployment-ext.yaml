@@ -51,7 +51,7 @@ spec:
           - --domain-filter={{ join "\n" $values.pdns.zones | indent 12 | trim }}
           - --log-level={{ $values.logLevel }}
           #- --pdns-api-key=$(PDNS_API_KEY) # using env var
-          - --pdns-server={{ include "extpdns-pdns.fullname" $root }}
+          - --pdns-server=http://{{ include "extpdns-pdns.fullname" $root }}
           - --provider=pdns
           {{- if $values.registry }}
           - --registry={{ $values.registry }}
