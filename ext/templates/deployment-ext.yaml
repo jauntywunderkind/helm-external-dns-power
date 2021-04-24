@@ -46,21 +46,23 @@ spec:
                 name: {{ include "extpdns-persist.fullname" $root }}
                 key: api-key
           args:
-          # will make ExternalDNS see only the zones matching provided domain; omit to process all available zones in PowerDNS
-          # note: cross-chart picking!
-          - --interval={{ $values.interval }}
-          - --domain-filter={{ join "\n" $pdns.zones | indent 12 | trim }}
-          - --log-level={{ $values.logLevel }}
           #- --pdns-api-key=$(PDNS_API_KEY) # using env var
+          - --interval={{ $values.interval }}
+          - --log-level={{ $values.logLevel }}
           - --pdns-server=http://{{ include "extpdns-pdns.fullname" $root }}-api:{{ $pdns.service.api.port }}
           - --provider=pdns
+          - --txt-owner-id={{ $values.owner | default (include "extpdns.fullname" $root) }}
           {{- if $values.registry }}
           - --registry={{ $values.registry }}
           {{- end }}
           {{- range $values.source }}
           - --source={{ . }}
           {{- end }}
-          - --txt-owner-id={{ $values.owner | default (include "extpdns.fullname" $root) }}
+          # will make ExternalDNS see only the zones matching provided domain; omit to process all available zones in PowerDNS
+          # note: cross-chart picking!
+          {{- range $pdns.zones }}
+          - --domain-filter={{ . }}
+          {{- end }}
           securityContext:
             {{- toYaml $values.securityContext | nindent 12 }}
         {{- with $values.nodeSelector }}

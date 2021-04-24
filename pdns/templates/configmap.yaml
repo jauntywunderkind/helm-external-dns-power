@@ -9,14 +9,14 @@ data:
   # TODO supposed to be the edns nsid
   server-id: {{ .Values.pdns.serverId | default (include "extpdns.fullname" .) }}
   gpgsql-host: {{ .Values.persist.pg.serviceName | default (include "extpdns-persist.fullname" .) }}
-  gpgsql-port: {{ .Values.persist.pg.port | default 5432 }}
+  gpgsql-port: "{{ .Values.persist.pg.port | default 5432 }}"
   gpgsql-dbname: {{ .Values.persist.pg.database | default "pdns_db" }}
   # invalid connection option "application_name"
   #gpgsql-extra-connection-parameters: "appplication_name={{ .Values.pdns.pgAppName | default (include "extpdns.fullname" . ) }}"
   # services
   {{- range $name, $config := $pdns.serviceConfig }}
   {{ $service := get $pdns.service $name -}}
-  {{ $config }}: {{ $service.targetPort | default $service.port }}
+  {{ $config }}: "{{ $service.targetPort | default $service.port }}"
   {{- end }}
   # config
   {{- range $key, $value := .Values.pdns.config }}
