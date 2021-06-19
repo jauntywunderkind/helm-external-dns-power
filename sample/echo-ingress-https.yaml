@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo
+spec:
+  selector:
+    matchLabels:
+      app: echo
+  template:
+    metadata:
+      labels:
+        app: echo
+    spec:
+      containers:
+      - image: hashicorp/http-echo
+        name: echo
+        ports:
+        - containerPort: 5678
+        args:
+          - -text="Hello World"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo
+  #annotations:
+  #  external-dns.alpha.kubernetes.io/hostname: echo.sandybase.voodoowarez.com
+spec:
+  selector:
+    app: echo
+  #type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5678
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: echo
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    external-dns.alpha.kubernetes.io/hostname: "echo.sandybase.voodoowarez.com,echo2.sandybase.voodoowarez.com"
+spec:
+  rules:
+  - host: echo.sandybase.voodoowarez.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: echo
+          servicePort: 80
+  - host: echo2.sandybase.voodoowarez.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: echo
+          servicePort: 80
+  tls:
+  - hosts:
+    - echo.sandybase.voodoowarez.com
+    - echo2.sandybase.voodoowarez.com
+    secretName: echo-sandybase-tls
