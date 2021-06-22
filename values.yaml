@@ -95,8 +95,8 @@ pdns:
     # log-dns-details: "yes"
     # log-dns-queries: "yes"
     # log-timestamp: "yes"
-    #loglevel: 4
-    loglevel: 5
+    loglevel: 4
+    # loglevel: 99 # debug
     # max-cache-entries: 1000000
     max-cache-entries: 10000 # small system configuration
     # max-packet-cache-entries: 1000000
@@ -117,6 +117,7 @@ pdns:
     # query-cache-ttl: 20
     # query-local-address: "0.0.0.0, ::0"
     # query-logging: "no"
+    # query-logging: "yes" # debug
     # queue-limit: 1500 # ms
     # receiver-threads: 1
     # resolver: ""
@@ -136,7 +137,8 @@ pdns:
     webserver: "yes"
     webserver-address: 0.0.0.0
     webserver-allow-from: "0.0.0.0/0;::0/0"
-    # webserver-log-level: normal
+    # webserver-loglevel: normal
+    # webserver-loglevel: detailed # debug
     # webserver-port: 8081
     #xfr-max-received-mybtes: 100
     xfr-max-received-mbytes: 24

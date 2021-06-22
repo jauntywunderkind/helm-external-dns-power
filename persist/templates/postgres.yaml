@@ -28,3 +28,5 @@ spec:
           defaultUsers: true
   postgresql:
     version: "13"
+  #debug:
+  #  debug_logging: true
