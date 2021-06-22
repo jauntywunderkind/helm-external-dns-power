@@ -27,4 +27,4 @@ spec:
           defaultRoles: true
           defaultUsers: true
   postgresql:
-    version: "12"
+    version: "13"
